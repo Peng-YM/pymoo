@@ -14,7 +14,8 @@ class SubsetSelection:
         self.pop = population.copy()  # copy to avoid side effects
 
     def do(self, n_select, **kwargs):
-        return self._do(n_select, **kwargs)
+        selected = self._do(n_select, **kwargs)
+        return np.where(selected)[0]
 
     @abstractmethod
     def _do(self, n_select, **kwargs):
