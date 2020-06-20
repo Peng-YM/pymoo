@@ -1,13 +1,13 @@
 import numpy as np
-from scipy.spatial.distance import cdist
-
 from pymoo.algorithms.genetic_algorithm import GeneticAlgorithm
 from pymoo.factory import get_decomposition
+from pymoo.model.population import Population
 from pymoo.operators.crossover.simulated_binary_crossover import SimulatedBinaryCrossover
 from pymoo.operators.mutation.polynomial_mutation import PolynomialMutation
 from pymoo.operators.sampling.random_sampling import FloatRandomSampling
 from pymoo.util.display import MultiObjectiveDisplay
 from pymoo.util.misc import set_if_none
+from scipy.spatial.distance import cdist
 
 
 # =========================================================================================================
@@ -104,7 +104,7 @@ class MOEAD(GeneticAlgorithm):
             off = off[np.random.randint(0, len(off))]
 
             # repair first in case it is necessary - disabled if instance of NoRepair
-            off = repair.do(self.problem, off, algorithm=self)
+            off = repair.do(self.problem, Population.create(off), algorithm=self)[0]
 
             # evaluate the offspring
             self.evaluator.eval(self.problem, off)
@@ -119,6 +119,5 @@ class MOEAD(GeneticAlgorithm):
             # get the absolute index in F where offspring is better than the current F (decomposed space)
             I = np.where(off_FV < FV)[0]
             pop[N[I]] = off
-
 
 # parse_doc_string(MOEAD.__init__)
