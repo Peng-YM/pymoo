@@ -1,7 +1,8 @@
 import numpy as np
 from scipy.spatial.distance import pdist, squareform
-from pymoo.model.population import Population
+
 from pymoo.algorithms.moead import MOEAD
+from pymoo.model.population import Population
 
 
 class MOEAD_MM(MOEAD):
@@ -20,7 +21,7 @@ class MOEAD_MM(MOEAD):
         # randomly assign mu solutions to each sub-population
         self.sub_pops = []
         for i, _ in enumerate(self.ref_dirs):
-            self.sub_pops.append(self.pop[i * self.mu: (i+1) * self.mu])
+            self.sub_pops.append(self.pop[i * self.mu: (i + 1) * self.mu])
 
     def _next(self):
         # estimate the clearing radius
@@ -38,25 +39,25 @@ class MOEAD_MM(MOEAD):
         # randomly select a neighborhood weight vector j
         j = np.random.choice(self.neighbors[sub_pop_index])
         x2 = np.random.choice(self.sub_pops[j])
-        # produce offspring from x1 and x2
-        off = crossover.do(self.problem, Population.create(x1, x2), np.array([[0, 1]]))
+        # produce an offspring from x1 and x2
+        off = crossover.do(self.problem, x1, x2)
         off = mutation.do(self.problem, off)
         # repair the offspring if necessary
-        off = repair.do(self.problem, Population.create(off), algorithm=self)[0]
+        off = repair.do(self.problem, off, algorithm=self)[0]
         # evaluate the offspring
         self.evaluator.eval(self.problem, off)
         # update the ideal point
         self.ideal_point = np.min(np.vstack([self.ideal_point, off.F]), axis=0)
         return off
 
-    def selection_(self, C, ref_dir, clearing_radius):
-        X = np.asarray([indv.X for indv in C])
-        F = np.asarray([indv.X for indv in C])
+    def selection_(self, individuals, ref_dir, clearing_radius):
+        X = np.asarray([indv.X for indv in individuals])
+        F = np.asarray([indv.F for indv in individuals])
         D = squareform(pdist(X))
         # find the closest pair of points in C
         min_d, min_i, min_j = float("inf"), 0, 0
-        for i in range(len(C)-1):
-            for j in range(i+1, len(C)):
+        for i in range(len(individuals) - 1):
+            for j in range(i + 1, len(individuals)):
                 if D[i, j] < min_d:
                     min_d = D[i, j]
                     min_i, min_j = i, j
@@ -69,7 +70,7 @@ class MOEAD_MM(MOEAD):
         else:
             i = np.argmax(FV)
         # remove one solutions
-        return np.delete(C, i)
+        return np.delete(individuals, i)
 
     def estimate_clearing_radius(self, percentage=0.1):
         k = int(self.pop_size * percentage)
