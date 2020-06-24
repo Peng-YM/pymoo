@@ -98,9 +98,11 @@ class ModifiedTwoStageSubsetSelection(TwoStageSubsetSelection):
         equivalent_solution_sets.sort(key=lambda s: len(s))
         for set_ in equivalent_solution_sets:
             if ~np.any(selected):
-                i = np.random.choice(set_, 1)
-                selected[i] = True
+                # if no solution has been select randomly select a solution from this solution set
+                selected[np.random.choice(set_)] = True
             else:
+                # otherwise try to select a solution in this solution set which has maximum distance
+                # to its neighborhood solutions in the decision space.
                 D = cdist(X[set_], X[selected])
                 j = np.argmax(np.min(D, axis=1), axis=0)
                 i = set_[j]
