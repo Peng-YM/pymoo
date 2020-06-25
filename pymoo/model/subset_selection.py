@@ -14,7 +14,7 @@ class SubsetSelection:
         self.pop = population.copy()  # copy to avoid side effects
 
     def do(self, n_select, **kwargs):
-        if n_select <= len(self.pop):
+        if n_select >= len(self.pop):
             return np.ones(len(self.pop))
 
         selected = self._do(n_select, **kwargs)
