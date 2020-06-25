@@ -137,3 +137,14 @@ def load_polygon_problem(file_path):
         for k, v in data.items():
             data[k] = np.asarray(v)
         return GeneralPolygonProblem(**data)
+
+
+def save_polygon_problem(problem, file_path):
+    data = {
+        "obj_points": problem.obj_points_2d.tolist(),
+        "basis": problem.basis.tolist(),
+        "xl": problem.xl.tolist(),
+        "xu": problem.xu.tolist()
+    }
+    with open(file_path, 'w') as f:
+        json.dump(data, f)
