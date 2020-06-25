@@ -4,12 +4,9 @@ from mpl_toolkits.mplot3d import Axes3D  # noqa: F401 unused import
 
 from pymoo.algorithms.moead_mm import MOEAD_MM
 from pymoo.factory import get_reference_directions
-from pymoo.model.evaluator import Evaluator
 from pymoo.optimize import minimize
 from pymoo.problems.multi.distance_minimization import DistanceMinimization
-from pymoo.util.nds.non_dominated_sorting import NonDominatedSorting
 from pymoo.visualization.scatter import Scatter
-from pymoo.subset_selection.distance_based_subset_selection import DistanceBasedSubsetSelection
 
 
 polyhedra = np.array([
@@ -33,11 +30,9 @@ for s in shifts:
 
 problem = DistanceMinimization(
     obj_points=obj_points,
-    xl=np.full(3, -100),
-    xu=np.full(3, 100)
+    xl=np.full(3, -10),
+    xu=np.full(3, 10)
 )
-
-uea_evaluator = Evaluator(use_archive=True)
 
 res = minimize(
     problem=problem,
@@ -45,15 +40,9 @@ res = minimize(
         ref_dirs=get_reference_directions('energy', problem.n_obj, 100),
         sub_pop_size=4
     ),
-    termination=('n_eval', 100000),
-    verbose=False,
-    evaluator=uea_evaluator
+    termination=('n_eval', 10000),
+    verbose=True,
 )
-
-# non-dominated-sorting
-archive = res.algorithm.evaluator.archive
-nds = NonDominatedSorting().do(archive.get("F"), only_non_dominated_front=True)
-selected = DistanceBasedSubsetSelection(archive[nds]).do(n_select=100)
 
 # visualization
 plt.rc('font', family='serif')
@@ -71,15 +60,15 @@ for s in shifts:
     ax.plot(x, y, z, color='black')
 
     for k in range(4):
-        x = [vertices[k, 0], vertices[4,  0]]
+        x = [vertices[k, 0], vertices[4, 0]]
         y = [vertices[k, 1], vertices[4, 1]]
         z = [vertices[k, 2], vertices[4, 2]]
         ax.plot(x, y, z, color='black')
 
 # show solutions
-plot.add(archive[selected].get("X"), s=30, facecolor=(1, 1, 1, 1), edgecolors='r', label="Solutions").do()
+plot.add(res.X, s=30, facecolor=(1, 1, 1, 1), edgecolors='r', label="Solutions").do()
 
 ax.legend()
 ax.set(xlabel="$x_1$", ylabel="$x_2$", zlabel="$x_3$", title="Decision Space")
 
-plt.savefig("res.pdf")
+plt.show()
