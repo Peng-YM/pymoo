@@ -15,7 +15,7 @@ class SubsetSelection:
 
     def do(self, n_select, **kwargs):
         if n_select >= len(self.pop):
-            return np.ones(len(self.pop))
+            return np.full(len(self.pop), True)
 
         selected = self._do(n_select, **kwargs)
         return np.where(selected)[0]
