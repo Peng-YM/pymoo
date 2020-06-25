@@ -11,7 +11,7 @@ centers = np.array([
 problem = create_regular_polygon_problem(
     centers=centers,
     radii=[1, 0.5, 0.5, 1],
-    n_vertex=[6, 6, 6, 6],
+    n_vertex=[3, 6, 6, 3],
     xl=-100, xu=100
 )
 

@@ -68,24 +68,24 @@ class GeneralPolygonProblem(DistanceMinimization):
         return Y
 
     def visualize(self, X=None):
-        with plt.style.context(['science', 'ieee', 'scatter']):
-            fig, ax = plt.subplots()
-            ax.set(title=f"Decision Space ($D={self.n_var}$)", xlabel="$x_1$", ylabel="$x_2$")
-            ax.set_aspect('equal', 'box')
+        fig = plt.figure()
+        ax = fig.add_subplot(111)
+        fig.tight_layout()
+        ax.set_aspect('equal', 'box')
+        ax.set(title=f"Decision Space ($D={self.n_var}$)", xlabel="$x_1$", ylabel="$x_2$")
 
-            for i, V in enumerate(self.obj_points):
-                # project v into 2-d plane
-                v2d = self.project_2d(V)
-                ax.scatter(v2d[:, 0], v2d[:, 1], s=10)
+        for i, V in enumerate(self.obj_points):
+            # project v into 2-d plane
+            v2d = self.project_2d(V)
+            ax.scatter(v2d[:, 0], v2d[:, 1], s=40)
 
-            # project X in to 2-d plane
-            if X is not None:
-                X2d = self.project_2d(X)
-                ax.scatter(X2d[:, 0], X2d[:, 1], s=3, facecolors='none', edgecolors='black', label='Solutions')
-                ax.legend()
+        # project X in to 2-d plane
+        if X is not None:
+            X2d = self.project_2d(X)
+            ax.scatter(X2d[:, 0], X2d[:, 1], s=40, facecolors='none', edgecolors='black', label='Solutions')
+            ax.legend()
 
-            fig.tight_layout()
-            plt.show()
+        plt.show()
 
 
 def create_regular_polygon_problem(centers, n_vertex, radii, xl, xu, basis=None):
@@ -127,7 +127,7 @@ def create_regular_polygon_problem(centers, n_vertex, radii, xl, xu, basis=None)
         vertices = radii[k] * np.hstack((-sin(angles), cos(angles))) + center
         for j in range(n_vertex[k]):
             obj_points[j].append(vertices[j])
-    return GeneralPolygonProblem(np.asarray(obj_points), basis, xl, xu)
+    return GeneralPolygonProblem(obj_points, basis, xl, xu)
 
 
 def load_polygon_problem(file_path):
