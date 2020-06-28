@@ -29,7 +29,8 @@ data = dict(
     description="Multi-Objective Optimization in Python",
     license='Apache License 2.0',
     keywords="optimization",
-    install_requires=['numpy>=1.15', 'scipy>=1.1', 'matplotlib>=3', 'autograd>=1.3', 'cma==2.7', 'multimethod>=1.3'],
+    install_requires=['numpy>=1.15', 'scipy>=1.1', 'matplotlib>=3', 'autograd>=1.3', 'cma==2.7', 'multimethod>=1.3',
+                      'pandas>=1.0.5', 'scikit-learn>=0.23.1'],
     platforms='any',
     classifiers=[
         'Intended Audience :: Developers',
