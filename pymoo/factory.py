@@ -412,6 +412,8 @@ def get_performance_indicator_options():
     from pymoo.performance_indicator.igd_plus import IGDPlus
     from pymoo.performance_indicator.hv import Hypervolume
     from pymoo.performance_indicator.rmetric import RMetric
+    from pymoo.performance_indicator.psp import PSP
+    from pymoo.performance_indicator.igdx import IGDX
 
     PERFORMANCE_INDICATOR = [
         ("gd", GD),
@@ -419,7 +421,9 @@ def get_performance_indicator_options():
         ("igd", IGD),
         ("igd+", IGDPlus),
         ("hv", Hypervolume),
-        ("rmetric", RMetric)
+        ("rmetric", RMetric),
+        ("igdx", IGDX),
+        ("psp", PSP)
     ]
     return PERFORMANCE_INDICATOR
 
