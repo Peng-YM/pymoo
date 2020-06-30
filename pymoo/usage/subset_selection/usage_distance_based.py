@@ -29,7 +29,7 @@ plot.do()
 plt.legend()
 
 plot = Scatter()
-plot.add(PF, color='r', s=10, label="Pareto set")
+plot.add(PF, color='r', s=10, label="Pareto front")
 plot.add(F, color='b', s=30, label="Selected solutions")
 plot.do()
 plt.legend()

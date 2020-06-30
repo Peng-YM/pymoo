@@ -16,8 +16,8 @@ pop.new()
 pop.set("X", PS, "F", PF)
 
 for method, name in [(TwoStageSubsetSelection, "TSS"), (ModifiedTwoStageSubsetSelection, "$TSS^+$")]:
-    clustering = DBCANClustering(epsilon=0.05, min_samples=5)
-    selection = method(clustering, delta_max=0.03)
+    clustering = DBCANClustering(epsilon=0.1, min_samples=1)
+    selection = method(clustering, delta_max=0.1)
 
     selected = selection.do(pop, n_select=50)
 
@@ -33,7 +33,7 @@ for method, name in [(TwoStageSubsetSelection, "TSS"), (ModifiedTwoStageSubsetSe
         plt.legend()
 
         plot = Scatter()
-        plot.add(PF, color='b', s=5, label="Pareto set")
+        plot.add(PF, color='b', s=5, label="Pareto front")
         plot.add(F, facecolor='none', edgecolor='r', s=40, label="Selected solutions", linewidth=2)
         plot.do()
         plt.legend()
