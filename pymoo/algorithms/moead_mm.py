@@ -29,7 +29,8 @@ class MOEAD_MM(MOEAD):
         # update each sub-population
         for i, sub_pop in enumerate(self.sub_pops):
             offspring = self.mating_(i)
-            self.sub_pops[i] = self.selection_(sub_pop.merge(offspring), self.ref_dirs[i], clearing_radius)
+            self.sub_pops[i] = self.selection_(Population.merge(self.sub_pops[i], offspring),
+                                               self.ref_dirs[i], clearing_radius)
         # merge sub-populations
         self.pop = Population.create(*self.sub_pops)
 

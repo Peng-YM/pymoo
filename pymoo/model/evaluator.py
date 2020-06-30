@@ -87,7 +87,7 @@ class Evaluator:
             if self.archive is None:
                 self.archive = pop
             else:
-                self.archive = self.archive.merge(pop[I])
+                self.archive = Population.merge(self.archive, pop[I])
 
         if is_individual:
             return pop[0]
