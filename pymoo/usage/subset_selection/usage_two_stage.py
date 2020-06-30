@@ -17,9 +17,9 @@ pop.set("X", PS, "F", PF)
 
 for method, name in [(TwoStageSubsetSelection, "TSS"), (ModifiedTwoStageSubsetSelection, "$TSS^+$")]:
     clustering = DBCANClustering(epsilon=0.05, min_samples=5)
-    selection = method(pop, clustering, delta_max=0.03)
+    selection = method(clustering, delta_max=0.03)
 
-    selected = selection.do(n_select=50)
+    selected = selection.do(pop, n_select=50)
 
     # visualization
     X = PS[selected]

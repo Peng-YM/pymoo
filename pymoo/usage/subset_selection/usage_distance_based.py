@@ -14,9 +14,9 @@ pop = Population(len(PS))
 pop.new()
 pop.set("X", PS, "F", PF)
 
-selection = DistanceBasedSubsetSelection(pop, based_on="F", extreme_point="all")
+selection = DistanceBasedSubsetSelection(based_on="F", extreme_point="all")
 
-selected = selection.do(n_select=5)
+selected = selection.do(pop, n_select=5)
 
 # visualization
 X = PS[selected]

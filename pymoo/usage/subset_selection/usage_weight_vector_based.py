@@ -14,9 +14,9 @@ pop = Population(len(PS))
 pop.new()
 pop.set("X", PS, "F", PF)
 
-selection = WeightVectorBasedSubsetSelection(pop)
+selection = WeightVectorBasedSubsetSelection()
 
-selected = selection.do(n_select=50)
+selected = selection.do(pop, n_select=50)
 
 # visualization
 X = PS[selected]

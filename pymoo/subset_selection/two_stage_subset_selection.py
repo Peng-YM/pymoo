@@ -17,15 +17,14 @@ class DBCANClustering:
 
 
 class TwoStageSubsetSelection(SubsetSelection):
-    def __init__(self, pop, clustering, delta_max):
+    def __init__(self, clustering, delta_max):
         self.clustering = clustering
         self.delta_max = delta_max
-        super().__init__(pop)
 
-    def _do(self, n_select, **kwargs):
-        X = normalize(self.pop.get("X"))
-        F = normalize(self.pop.get("F"))
-        selected = np.full(len(self.pop), False)
+    def _do(self, pop, n_select, **kwargs):
+        X = normalize(pop.get("X"))
+        F = normalize(pop.get("F"))
+        selected = np.full(len(pop), False)
         # select extreme solutions
         I = self.select_extreme_solutions(X, F)
         selected[I] = True
@@ -76,17 +75,17 @@ class TwoStageSubsetSelection(SubsetSelection):
 
 
 class ModifiedTwoStageSubsetSelection(TwoStageSubsetSelection):
-    def __init__(self, population, clustering, delta_max, objective_selector=None):
+    def __init__(self, clustering, delta_max, objective_selector=None):
         if objective_selector is None:
-            self.objective_selector = DistanceBasedSubsetSelection(population)
-        super().__init__(population, clustering, delta_max)
+            self.objective_selector = DistanceBasedSubsetSelection()
+        super().__init__(clustering, delta_max)
 
-    def _do(self, n_select, **kwargs):
+    def _do(self, pop, n_select, **kwargs):
         # normalize
-        X = normalize(self.pop.get("X"))
-        F = normalize(self.pop.get("F"))
+        X = normalize(pop.get("X"))
+        F = normalize(pop.get("F"))
         # step 1: select sparse solutions in the decision space
-        selected_idx = self.objective_selector.do(n_select)
+        selected_idx = self.objective_selector.do(pop, n_select)
         # step 2: select equivalent solutions for each selected solution
         # each solution set stores indices of equivalent solutions
         equivalent_solution_sets = [None for _ in range(len(selected_idx))]
@@ -94,7 +93,7 @@ class ModifiedTwoStageSubsetSelection(TwoStageSubsetSelection):
             equivalent_solution_sets[i] = self.select_equivalent_solutions(X, F, index)
         # step 3: select one solution in each equivalent solution set
         # sort the equivalent solution sets based on cardinality.
-        selected = np.full(len(self.pop), False)
+        selected = np.full(len(pop), False)
         equivalent_solution_sets.sort(key=lambda s: len(s))
         for set_ in equivalent_solution_sets:
             if ~np.any(selected):

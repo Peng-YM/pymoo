@@ -10,16 +10,13 @@ def normalize(V):
 
 
 class SubsetSelection:
-    def __init__(self, population):
-        self.pop = population.copy()  # copy to avoid side effects
+    def do(self, pop, n_select, **kwargs):
+        if n_select >= len(pop):
+            return np.full(len(pop), True)
 
-    def do(self, n_select, **kwargs):
-        if n_select >= len(self.pop):
-            return np.full(len(self.pop), True)
-
-        selected = self._do(n_select, **kwargs)
+        selected = self._do(pop, n_select, **kwargs)
         return np.where(selected)[0]
 
     @abstractmethod
-    def _do(self, n_select, **kwargs):
+    def _do(self, pop, n_select, **kwargs):
         pass

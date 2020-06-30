@@ -31,7 +31,7 @@ class DistanceBasedSubsetSelection(SubsetSelection):
     [2] H. K. Singh, K. S. Bhattacharjee, and T. Ray, “Distance-based subset selection for benchmarking in evolutionary multi/many-objective optimization,” IEEE Transactions on Evolutionary Computation, vol. 23, no. 5, pp. 904–912, October 2019.
     """
 
-    def __init__(self, population, based_on="F", extreme_point="one", dist_metric="euclidean"):
+    def __init__(self, based_on="F", extreme_point="one", dist_metric="euclidean"):
         assert (based_on in ["F", "X"]), "DSS can only based on fitness ('F') or decision variables ('X')!"
         assert (extreme_point in ["one", "all"]), "DSS either randomly selects one extreme points or selects all of " \
                                                   "extreme points! "
@@ -42,7 +42,6 @@ class DistanceBasedSubsetSelection(SubsetSelection):
         self.base_on = based_on
         self.extreme_points = extreme_point
         self.dist_metric = dist_metric
-        super().__init__(population)
 
     def select_extreme_points(self, V):
         [_, D] = V.shape
@@ -52,9 +51,9 @@ class DistanceBasedSubsetSelection(SubsetSelection):
         else:
             return np.argmin(V, axis=0)
 
-    def _do(self, n_select, **kwargs):
-        selected = np.full(len(self.pop), False)
-        V = self.pop.get(self.base_on)
+    def _do(self, pop, n_select, **kwargs):
+        selected = np.full(len(pop), False)
+        V = pop.get(self.base_on)
         # normalization
         V = normalize(V)
         # select extreme points
