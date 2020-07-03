@@ -20,9 +20,9 @@ def rank_sum_table(results, columns, rows, baseline=0, goal='minimize', signific
     std_values = np.std(results, axis=2)
 
     # sort the mean value for each row
-    I = np.argsort(mean_values, axis=1)
-    I = np.fliplr(I) if goal is 'maximize' else I
-    ranks = np.sort(I, axis=1)  # get the ranks
+    orders = np.argsort(mean_values, axis=1)
+    orders = np.fliplr(orders) if goal == 'maximize' else orders
+    ranks = np.argsort(orders, axis=1)
 
     # rank sum test
     counts = np.zeros((3, num_col), dtype=np.int)  # count of +/-/=
@@ -33,17 +33,20 @@ def rank_sum_table(results, columns, rows, baseline=0, goal='minimize', signific
             current = results[i, j]
             [_, p_value] = ranksums(current, base)
             m, s, r = rnd(mean_values[i, j], significant_digits), rnd(std_values[i, j], significant_digits), ranks[i, j]
+            table.iloc[i, j] = f"{m} \u00B1 {s} ({r})"
+            if j == baseline:
+                continue
             if p_value < significant_level:
-                if (m < mean_values[i, baseline]) ^ (goal is 'minimize'):
+                if (m < mean_values[i, baseline]) ^ (goal == 'minimize'):
                     counts[1, j] += 1  # current observations are worse than the baseline --> -
-                    table.iloc[i, j] = f"{m} \u00B1 {s} ({r}) -"
+                    table.iloc[i, j] += " -"
                 else:
                     counts[0, j] += 1  # current observations are better than the baseline --> +
-                    table.iloc[i, j] = f"{m} \u00B1 {s} ({r}) +"
+                    table.iloc[i, j] += " +"
             else:
                 # no significant different between current observation and the baseline
                 counts[2, j] += 1
-                table.iloc[i, j] = f"{m} \u00B1 {s} ({r}) \u2248"
+                table.iloc[i, j] += " \u2248"
     # the summary line
     for j in range(num_col):
         table.iloc[num_row, j] = 'baseline' if j == baseline else (f"{counts[0, j]}/{counts[1, j]}/{counts[2, j]}")
