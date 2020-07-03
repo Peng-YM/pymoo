@@ -31,6 +31,7 @@ class MMF1z(MMF):
     ----------
     k: k > 0, k controls the deformation degree of the global PS in x_1 in [-1, 2).
     """
+
     def __init__(self, k=3):
         assert (k > 0), "Invalid parameter k!"
         self.k = k
@@ -77,12 +78,13 @@ class MMF1e(MMF):
     ----------
     a: a > 0 and a <= 1. a controls the amplitude of the global Pareto set in x_1 in [2, 3]
     """
+
     def __init__(self, a=e):
         assert (a > 0 and a != 1), "Invalid parameter a!"
         self.a = a  # a controls the amplitude of the global PS in X1 in [1, 2)
         super().__init__(
             n_var=2, n_obj=2, n_constr=0, type_var=double,
-            xl=[1, -1], xu=[3, 1]
+            xl=[1, -a ** 3], xu=[3, a ** 3]
         )
 
     def _evaluate(self, X, out, *args, **kwargs):

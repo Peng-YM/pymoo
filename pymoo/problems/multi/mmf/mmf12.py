@@ -14,6 +14,7 @@ class MMF12(MMF):
     num_total_sets: the total number of global and local PSs.
     num_pieces: the number of discontinuous piece in each PF (PS).
     """
+
     def __init__(self, num_total_sets=2, num_pieces=4):
         self.np = num_total_sets
         self.q = num_pieces
@@ -26,7 +27,8 @@ class MMF12(MMF):
         X1 = X[:, 0]
         X2 = X[:, 1]
         F = X.copy()
-        g = 2 - exp(-2 * log10(2) * ((X2 - 0.1) / 0.8) ** 2) * (sin(self.np * pi * X2)**6)
+
+        g = 2 - exp(-2 * log10(2) * ((X2 - 0.1) / 0.8) ** 2) * (sin(self.np * pi * X2) ** 6)
         h = 1 - (X1 / g) ** 2 - (X1 / g) * sin(2 * pi * self.q * X1)
         F[:, 1] = g * h
 

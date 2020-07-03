@@ -34,6 +34,7 @@ class MMF14(MMF14Base):
     ----------
     num_pareto_sets: the total number of global PSs.
     """
+
     def __init__(self, num_pareto_sets=2):
         self.np = num_pareto_sets
         super().__init__(
@@ -70,6 +71,7 @@ class MMF14a(MMF14Base):
     ----------
     num_pareto_sets: the total number of global PSs.
     """
+
     def __init__(self, num_pareto_sets=2):
         self.np = num_pareto_sets
         super().__init__(
@@ -110,6 +112,7 @@ class MMF15(MMF14Base):
     ----------
     num_total_sets: the total number of local and global PSs.
     """
+
     def __init__(self, num_total_sets=2):
         self.np = num_total_sets
         super().__init__(
@@ -141,6 +144,7 @@ class MMF15a(MMF14Base):
     ----------
     num_total_sets: the total number of local and global PSs.
     """
+
     def __init__(self, num_total_sets=2):
         self.np = num_total_sets
         super().__init__(

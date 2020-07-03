@@ -75,9 +75,8 @@ class TwoStageSubsetSelection(SubsetSelection):
 
 
 class ModifiedTwoStageSubsetSelection(TwoStageSubsetSelection):
-    def __init__(self, clustering, delta_max, objective_selector=None):
-        if objective_selector is None:
-            self.objective_selector = DistanceBasedSubsetSelection()
+    def __init__(self, clustering, delta_max, objective_selector=DistanceBasedSubsetSelection()):
+        self.objective_selector = objective_selector
         super().__init__(clustering, delta_max)
 
     def _do(self, pop, n_select, **kwargs):

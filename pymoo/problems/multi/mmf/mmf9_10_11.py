@@ -1,4 +1,5 @@
-from numpy import zeros, pi, linspace, double, arange, sin, exp, log10
+import numpy as np
+from numpy import zeros, pi, linspace, double, arange, sin, exp, log10, cos
 
 from pymoo.problems.multi.mmf import MMF
 
@@ -31,6 +32,7 @@ class MMF9(MMF9Base):
     ----------
     num_pareto_sets: the number of global PSs, default is 2.
     """
+
     def __init__(self, num_pareto_sets=2):
         self.np = num_pareto_sets
         super().__init__(
@@ -45,6 +47,41 @@ class MMF9(MMF9Base):
             PS[I, 0] = linspace(0.1, 1.1, h)
             PS[I, 1] = (1 / (2 * self.np)) + (1 / self.np) * i
         return PS
+
+
+class MMF9_r(MMF):
+    def __init__(self, num_pareto_sets=2, angle=pi / 4):
+        self.np = num_pareto_sets
+        self.g = lambda X: 2 - sin(self.np * pi * X) ** 6
+
+        self.M = np.array([
+            [cos(angle), -sin(angle)],
+            [sin(angle), cos(angle)]
+        ])
+
+        super().__init__(
+            n_var=2, n_obj=2, n_constr=0, type_var=double,
+            xl=[-0.5, -0.5], xu=[0.5, 0.5]
+        )
+
+    def _evaluate(self, X, out, *args, **kwargs):
+        # F = zeros((len(X), self.n_var))
+        # X = X @ self.M  # apply rotation
+        # X1 = X[:, 0]
+        # X2 = X[:, 1]
+        #
+        # A = 0
+        #
+        # F[:, 0] = X1 + A
+        # F[:, 1] = (self.g(X2) / X1) + A
+        #
+        # out["F"] = F
+        # TODO: implement this
+        raise NotImplementedError
+
+    def _calc_pareto_set(self, n_pareto_points=500):
+        # TODO: implement this
+        raise NotImplementedError
 
 
 class MMF10(MMF9Base):
@@ -69,6 +106,7 @@ class MMF11(MMF9Base):
     ----------
     num_total_sets: the total number of global and local PSs.
     """
+
     def __init__(self, num_total_sets=2):
         self.np = num_total_sets
         super().__init__(
