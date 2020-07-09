@@ -1,6 +1,7 @@
 import numpy as np
+from multimethod import overload, isa
 
-from pymoo.model.population import Population
+from pymoo.model.population import Population, Individual
 
 
 class Crossover:
@@ -14,35 +15,8 @@ class Crossover:
         self.n_parents = n_parents
         self.n_offsprings = n_offsprings
 
-    def do(self, problem, pop, parents, **kwargs):
-        """
-
-        This method executes the crossover on the parents. This class wraps the implementation of the class
-        that implements the crossover.
-
-        Parameters
-        ----------
-        problem: class
-            The problem to be solved. Provides information such as lower and upper bounds or feasibility
-            conditions for custom crossovers.
-
-        pop : Population
-            The population as an object
-
-        parents: numpy.array
-            The select parents of the population for the crossover
-
-        kwargs : dict
-            Any additional data that might be necessary to perform the crossover. E.g. constants of an algorithm.
-
-        Returns
-        -------
-        offsprings : Population
-            The off as a matrix. n_children rows and the number of columns is equal to the variable
-            length of the problem.
-
-        """
-
+    @overload
+    def do(self, problem, pop: isa(Population), parents, **kwargs):
         if self.n_parents != parents.shape[1]:
             raise ValueError('Exception during crossover: Number of parents differs from defined at crossover.')
 
@@ -64,3 +38,9 @@ class Crossover:
         off = pop.new("X", X)
 
         return off
+
+    @overload
+    def do(self, problem, individual_a: isa(Individual), individual_b: isa(Individual), **kwargs):
+        pop = Population.create(individual_a, individual_b)
+        parents = np.array([[0, 1]])
+        return self.do(problem, pop, parents, **kwargs)

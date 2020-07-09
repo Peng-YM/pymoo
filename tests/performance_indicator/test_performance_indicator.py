@@ -18,6 +18,12 @@ def get_indicators(pf):
     return gd, igd, gd_plus, igd_plus
 
 
+def get_decision_indicators(ps):
+    igdx = get_performance_indicator("igdx", ps)
+    psp = get_performance_indicator("psp", ps)
+    return igdx, psp
+
+
 class PerformanceIndicatorTest(unittest.TestCase):
 
     def test_usages(self):
@@ -190,6 +196,28 @@ class PerformanceIndicatorTest(unittest.TestCase):
 
         self.assertAlmostEqual(igd_plus.calc(A), 2.828, places=2)
         self.assertAlmostEqual(igd_plus.calc(B), 2.828, places=2)
+
+    def test_performance_indicator_10(self):
+        A = np.array([[1, 8], [2, 2], [8, 1]])
+        B = np.array([[2, 2]])
+        ps = np.array([[0, 0]])
+        igdx, psp = get_decision_indicators(ps)
+
+        self.assertAlmostEqual(igdx.calc(A), 2.828, places=2)
+        self.assertAlmostEqual(igdx.calc(B), 2.828, places=2)
+        self.assertAlmostEqual(psp.calc(A), 0.424, places=2)
+        self.assertAlmostEqual(psp.calc(B), 0.424, places=2)
+
+    def test_performance_indicator_11(self):
+        A = np.array([[0, 1], [1, 0], [1, 2], [2, 1]])
+        B = np.array([[1, 1]])
+        ps = np.array([[0, 0], [0, 2], [2, 0], [2, 2]])
+        igdx, psp = get_decision_indicators(ps)
+
+        self.assertAlmostEqual(igdx.calc(A), 1.000, places=2)
+        self.assertAlmostEqual(igdx.calc(B), np.sqrt(2), places=2)
+        self.assertAlmostEqual(psp.calc(A), 1.189, places=2)
+        self.assertAlmostEqual(psp.calc(B), 0.000, places=2)
 
 
 if __name__ == '__main__':

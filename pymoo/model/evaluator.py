@@ -34,10 +34,14 @@ class Evaluator:
 
     def __init__(self,
                  skip_already_evaluated=True,
-                 evaluate_values_of=["F", "CV", "G"]):
+                 evaluate_values_of=["F", "CV", "G"],
+                 use_archive=False):
         self.n_eval = 0
         self.evaluate_values_of = evaluate_values_of
         self.skip_already_evaluated = skip_already_evaluated
+        # unbounded external archive
+        self.use_archive = use_archive
+        self.archive = None
 
     def eval(self,
              problem,
@@ -76,9 +80,14 @@ class Evaluator:
         # actually evaluate all solutions using the function that can be overwritten
         if len(I) > 0:
             self._eval(problem, pop[I], **kwargs)
-
             # set the feasibility attribute if cv exists
             set_feasibility(pop[I])
+
+        if self.use_archive:
+            if self.archive is None:
+                self.archive = pop
+            else:
+                self.archive = Population.merge(self.archive, pop[I])
 
         if is_individual:
             return pop[0]
