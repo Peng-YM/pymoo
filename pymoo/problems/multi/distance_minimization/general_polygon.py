@@ -6,7 +6,7 @@ import numpy as np
 from numpy import pi, sin, cos
 from numpy.linalg import inv, lstsq
 
-from pymoo.problems.multi.distance_minimization import DistanceMinimization
+from pymoo.problems.multi.distance_minimization.distance_minimization import DistanceMinimization
 from pymoo.util.misc import all_combinations
 from pymoo.util.nds.non_dominated_sorting import NonDominatedSorting
 
@@ -42,7 +42,7 @@ class GeneralPolygonProblem(DistanceMinimization):
         X = all_combinations(X_, Y_)
         Xnd = self.map_2d_subspace(X)  # map the points to 2-dimensional subspace
         F = self.evaluate(Xnd, return_values_of=["F"])
-        nds = NonDominatedSorting().do(F, only_non_dominated_front=True)
+        nds = NonDominatedSorting(method="efficient_non_dominated_sort").do(F, only_non_dominated_front=True)
 
         return Xnd[nds]
 
@@ -68,24 +68,25 @@ class GeneralPolygonProblem(DistanceMinimization):
         return Y
 
     def visualize(self, X=None):
-        fig = plt.figure()
-        ax = fig.add_subplot(111)
-        fig.tight_layout()
-        ax.set_aspect('equal', 'box')
-        ax.set(title=f"Decision Space ($D={self.n_var}$)", xlabel="$x_1$", ylabel="$x_2$")
+        with plt.style.context(['seaborn-paper']):
+            fig = plt.figure()
+            ax = fig.add_subplot(111)
+            fig.tight_layout()
+            ax.set_aspect('equal', 'box')
+            ax.set(title=f"Decision Space ($D={self.n_var}$)", xlabel="$x_1$", ylabel="$x_2$")
 
-        for i, V in enumerate(self.obj_points):
-            # project v into 2-d plane
-            v2d = self.project_2d(V)
-            ax.scatter(v2d[:, 0], v2d[:, 1], s=40)
+            for i, V in enumerate(self.obj_points):
+                # project v into 2-d plane
+                v2d = self.project_2d(V)
+                ax.scatter(v2d[:, 0], v2d[:, 1], s=40)
 
-        # project X in to 2-d plane
-        if X is not None:
-            X2d = self.project_2d(X)
-            ax.scatter(X2d[:, 0], X2d[:, 1], s=40, facecolors='none', edgecolors='black', label='Solutions')
-            ax.legend()
+            # project X in to 2-d plane
+            if X is not None:
+                X2d = self.project_2d(X)
+                ax.scatter(X2d[:, 0], X2d[:, 1], s=40, facecolors='none', edgecolors='black', label='Solutions')
+                ax.legend()
 
-        plt.show()
+            plt.show()
 
 
 def create_regular_polygon_problem(centers, n_vertex, radii, xl, xu, basis=None):
@@ -102,11 +103,11 @@ def create_regular_polygon_problem(centers, n_vertex, radii, xl, xu, basis=None)
     :param xu: numpy.ndarray or number
         upper bound
     :param basis: numpy.ndarray
-        two basis for plane transformation, default is [0, 1] and [1, 0].
+        two basis for plane transformation, default is [1, 0] and [0, 1].
     :return:
     """
     if basis is None:
-        basis = np.array([[0, 1], [1, 0]])
+        basis = np.array([[1, 0], [0, 1]])
     n_var = basis.shape[1]
 
     if isinstance(n_vertex, int):
