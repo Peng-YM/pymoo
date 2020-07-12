@@ -121,13 +121,17 @@ def create_regular_polygon_problem(centers, n_vertex, radii, xl, xu, basis=None)
 
     if isinstance(xu, numbers.Number):
         xu = np.full(n_var, xu)
-
-    obj_points = [[] for _ in range(max(n_vertex))]
+    n_obj = range(max(n_vertex))
+    obj_points = [[] for _ in n_obj]
     for k, center in enumerate(centers):
         angles = (2 * pi * np.arange(n_vertex[k]) / n_vertex[k]).reshape(-1, 1)  # to column vector
         vertices = radii[k] * np.hstack((-sin(angles), cos(angles))) + center
         for j in range(n_vertex[k]):
             obj_points[j].append(vertices[j])
+        
+    for j in range(max(n_vertex)):
+        obj_points[j] = np.array(obj_points[j])
+
     return GeneralPolygonProblem(obj_points, basis, xl, xu)
 
 
@@ -136,13 +140,13 @@ def load_polygon_problem(file_path):
         data = json.load(f)
         # convert to nd array
         for k, v in data.items():
-            data[k] = np.asarray(v)
+            data[k] = np.asarray(v, dtype=object)
         return GeneralPolygonProblem(**data)
 
 
 def save_polygon_problem(problem, file_path):
     data = {
-        "obj_points": problem.obj_points_2d.tolist(),
+        "obj_points": [p.tolist() for p in problem.obj_points],
         "basis": problem.basis.tolist(),
         "xl": problem.xl.tolist(),
         "xu": problem.xu.tolist()
