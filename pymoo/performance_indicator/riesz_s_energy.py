@@ -1,4 +1,4 @@
-from numpy import sum
+import numpy as np
 from scipy.spatial.distance import pdist, squareform
 
 
@@ -11,7 +11,7 @@ class RieszSEnergyIndicator:
         s = self.s or m - 1
         I, J = np.triu_indices(len(A), 1)
         D = squareform(pdist(A))[I, J] ** s
-        return 2 * sum(1 / D)
+        return 2 * np.sum(1 / D)
 
 
 if __name__ == '__main__':
