@@ -8,18 +8,18 @@ class RieszSEnergyIndicator:
 
     def calc(self, A):
         n, m = A.shape
-        s = self.s or m - 1
+        s = self.s or m ** 2
         I, J = np.triu_indices(len(A), 1)
+        print(I, J)
         D = squareform(pdist(A))[I, J] ** s
-        return 2 * np.sum(1 / D)
+        D = D[D != 0]  # handle division-by-zero errors!
+        return np.sum(1 / D) / n
 
 
 if __name__ == '__main__':
-    import numpy as np
-
-    X = np.array([[0, 0], [0, 1], [1, 1], [1, 0]])
+    X = np.array([
+        [0, 0], [0, 1], [1, 1], [1, 0]
+    ])
     indicator = RieszSEnergyIndicator()
-
-    assert indicator.calc(X) == (4 + np.sqrt(2)) * 2
 
     print("Riesz-s Energy is: ", indicator.calc(X))
