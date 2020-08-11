@@ -40,7 +40,7 @@ class TwoStageSubsetSelection(SubsetSelection):
             # maximize such distance
             j = np.argmax(ND, axis=0)
             i = remain[j]
-            # stage 2:  select equivalent solutions of i
+            # stage 2: select equivalent solutions of i
             I = self.select_equivalent_solutions(X, F, i)
             selected[I] = True
             cnt = cnt + len(I)
@@ -80,7 +80,7 @@ class ModifiedTwoStageSubsetSelection(TwoStageSubsetSelection):
         self.objective_selector = objective_selector
         super().__init__(clustering, delta_max)
 
-    def _do(self, pop, n_select, **kwargs):
+    def _do(self, pop, n_select, max_equivalent_solutions=1, **kwargs):
         selected = np.full(len(pop), False)
 
         # normalize
@@ -109,8 +109,11 @@ class ModifiedTwoStageSubsetSelection(TwoStageSubsetSelection):
             for idx in set_:
                 parents[idx] = i
 
+        n_selected_equivalent_solutions = [0 for _ in range(len(equivalent_solutions_indices))]
+
         # step 3: keep one solution in each equivalent solution set
-        while len(candidates) > 0:
+        cnt = 0
+        while cnt < n_select and len(candidates) > 0:
             # (1) randomly select a boundary solution in the decision space as an initial solution
             if not np.any(selected):
                 idx = np.argmin(X[candidates, np.random.randint(0, n_var)])
@@ -125,8 +128,13 @@ class ModifiedTwoStageSubsetSelection(TwoStageSubsetSelection):
 
             # select the solution
             selected[idx] = True
+            cnt += 1
+            n_selected_equivalent_solutions[parents[idx]] += 1
             # exclude its equivalent solutions from candidates
-            set_ = equivalent_solutions_indices[parents[idx]]
-            candidates = candidates[[i for i, c in enumerate(candidates) if c not in set_]]
+            if n_selected_equivalent_solutions[parents[idx]] < max_equivalent_solutions:
+                candidates = candidates[candidates != idx]
+            else:
+                set_ = equivalent_solutions_indices[parents[idx]]
+                candidates = candidates[[i for i, c in enumerate(candidates) if c not in set_]]
 
         return selected

@@ -88,8 +88,13 @@ class NSGA2(GeneticAlgorithm):
         mutation : {mutation}
         eliminate_duplicates : {eliminate_duplicates}
         n_offsprings : {n_offsprings}
-
         """
+
+        if 'survival' in kwargs:
+            survival = kwargs['survival']
+            del kwargs['survival']
+        else:
+            survival = RankAndCrowdingSurvival()
 
         kwargs['individual'] = Individual(rank=np.inf, crowding=-1)
         super().__init__(pop_size=pop_size,
@@ -97,7 +102,7 @@ class NSGA2(GeneticAlgorithm):
                          selection=selection,
                          crossover=crossover,
                          mutation=mutation,
-                         survival=RankAndCrowdingSurvival(),
+                         survival=survival,
                          eliminate_duplicates=eliminate_duplicates,
                          n_offsprings=n_offsprings,
                          display=display,
@@ -119,8 +124,13 @@ class NSGA2(GeneticAlgorithm):
 
 class RankAndCrowdingSurvival(Survival):
 
-    def __init__(self) -> None:
+    def __init__(self,  cdist_func=None) -> None:
         super().__init__(filter_infeasible=True)
+
+        if cdist_func is None:
+            self.cdist_func = lambda pop: calc_crowding_distance(pop.get("F"))
+        else:
+            self.cdist_func = cdist_func
 
     def _do(self, problem, pop, n_survive, D=None, **kwargs):
 
@@ -136,7 +146,7 @@ class RankAndCrowdingSurvival(Survival):
         for k, front in enumerate(fronts):
 
             # calculate the crowding distance of the front
-            crowding_of_front = calc_crowding_distance(F[front, :])
+            crowding_of_front = self.cdist_func(pop[front])
 
             # save rank and crowding in the individual class
             for j, i in enumerate(front):

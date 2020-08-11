@@ -1,0 +1,2 @@
+class IBEA():
+    pass

@@ -1,10 +1,9 @@
 from pymoo.algorithms.moead_mm import MOEAD_MM
+from pymoo.factory import get_reference_directions
+from pymoo.model.evaluator import Evaluator
+from pymoo.optimize import minimize
 from pymoo.problems.multi.mmf import MMF2
 from pymoo.visualization.scatter import Scatter
-from pymoo.factory import get_reference_directions
-from pymoo.optimize import minimize
-from pymoo.model.evaluator import Evaluator
-
 
 problem = MMF2()
 uea_evaluator = Evaluator(use_archive=True)
